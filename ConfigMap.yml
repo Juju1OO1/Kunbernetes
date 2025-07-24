@@ -1,0 +1,44 @@
+# Wordpress & MySQL ConfigMap
+---
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: wordpress-config
+  namespace: zy881001-dev
+data:
+  WORDPRESS_DATABASE_NAME: wordpress
+  WORDPRESS_DATABASE_USER: wpuser
+  WORDPRESS_REDIS_HOST: redis
+  WORDPRESS_USERNAME: admin
+  WORDPRESS_EMAIL: admin@example.com
+---
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: mysql-config
+  namespace: zy881001-dev
+data:
+  MYSQL_DATABASE: wordpress
+  MYSQL_USER: wpuser
+
+# Wordpress & MySQL Secret
+---
+apiVersion: v1
+kind: Secret
+metadata:
+  name: mysql-secret
+  namespace: zy881001-dev
+type: Opaque
+stringData:
+  MYSQL_ROOT_PASSWORD: rootpass
+  MYSQL_PASSWORD: wppass
+---
+apiVersion: v1
+kind: Secret
+metadata:
+  name: wordpress-secret
+  namespace: zy881001-dev
+type: Opaque
+stringData:
+  WORDPRESS_DATABASE_PASSWORD: wppass
+  WORDPRESS_PASSWORD: adminpass

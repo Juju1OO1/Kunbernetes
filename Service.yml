@@ -1,0 +1,57 @@
+# Service
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: redis
+  namespace: zy881001-dev
+spec:
+  selector:
+    app: redis
+  ports:
+    - port: 6379
+      targetPort: 6379
+      protocol: TCP
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: mysql
+  namespace: zy881001-dev
+spec:
+  selector:
+    app: mysql
+  ports:
+    - port: 3306
+      targetPort: 3306
+      protocol: TCP
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: wordpress
+  namespace: zy881001-dev
+spec:
+  selector:
+    app: wordpress
+  ports:
+    - name: http
+      port: 80
+      targetPort: 8080
+      protocol: TCP
+
+# Route
+---
+apiVersion: route.openshift.io/v1
+kind: Route
+metadata:
+  name: wordpress
+  namespace: zy881001-dev
+spec:
+  to:
+    kind: Service
+    name: wordpress
+  port:
+    targetPort: http
+  tls:
+    termination: edge
