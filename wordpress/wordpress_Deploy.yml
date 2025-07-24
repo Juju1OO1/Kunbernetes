@@ -1,0 +1,76 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: wordpress
+  namespace: zy881001-dev
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: wordpress
+  template:
+    metadata:
+      labels:
+        app: wordpress
+    spec:
+      containers:
+        - name: wordpress
+          image: bitnami/wordpress:latest
+          ports:
+            - containerPort: 8080
+              protocol: TCP
+          env:
+            - name: WORDPRESS_DATABASE_HOST
+              value: mysql
+            - name: WORDPRESS_DATABASE_PORT_NUMBER
+              value: "3306"
+            - name: WORDPRESS_REDIS_PORT_NUMBER
+              value: "6379"
+            - name: WORDPRESS_ENABLE_REDIS
+              value: "redis"
+            - name: WORDPRESS_REDIS_PASSWORD
+              value: ""
+            - name: WORDPRESS_DATABASE_NAME
+              valueFrom:
+                configMapKeyRef:
+                  name: wordpress-config
+                  key: WORDPRESS_DATABASE_NAME
+            - name: WORDPRESS_DATABASE_USER
+              valueFrom:
+                configMapKeyRef:
+                  name: wordpress-config
+                  key: WORDPRESS_DATABASE_USER
+            - name: WORDPRESS_DATABASE_PASSWORD
+              valueFrom:
+                secretKeyRef:
+                  name: wordpress-secret
+                  key: WORDPRESS_DATABASE_PASSWORD
+            - name: WORDPRESS_REDIS_HOST
+              valueFrom:
+                configMapKeyRef:
+                  name: wordpress-config
+                  key: WORDPRESS_REDIS_HOST
+            - name: WORDPRESS_USERNAME
+              valueFrom:
+                configMapKeyRef:
+                  name: wordpress-config
+                  key: WORDPRESS_USERNAME
+            - name: WORDPRESS_PASSWORD
+              valueFrom:
+                secretKeyRef:
+                  name: wordpress-secret
+                  key: WORDPRESS_PASSWORD
+            - name: WORDPRESS_EMAIL
+              valueFrom:
+                configMapKeyRef:
+                  name: wordpress-config
+                  key: WORDPRESS_EMAIL
+            - name: WORDPRESS_HTTP_PORT
+              value: "8080"
+          volumeMounts:
+            - name: wordpress-data
+              mountPath: /bitnami/wordpress
+      volumes:
+        - name: wordpress-data
+          persistentVolumeClaim:
+            claimName: wordpress-pvc
